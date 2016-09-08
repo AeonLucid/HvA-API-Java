@@ -174,6 +174,18 @@ public class HvAClient {
         return performRequest(StudyLocation[].class, "/api/studylocations");
     }
 
+    /**
+     * Gets the {@link StudyLocationPage} of the specified url of the Hogeschool van Amsterdam.
+     *
+     * @param url The url property of {@link StudyLocation}.
+     * @return Returns the {@link StudyLocationPage} of the specified url of the Hogeschool van Amsterdam.
+     */
+    public StudyLocationPage getStudyLocationsPage(String url) {
+        if (!authenticated) return null;
+
+        return performRequest(StudyLocationPage.class, String.format("/api/studylocations/page?url=%s&main=true&serviceUrl=%s/", url, API_URL));
+    }
+
     // GET
     private boolean performRequest(String urlPath) {
         Request.Builder requestBuilder = getRequestBuilder(urlPath).get();
