@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.aeonlucid.hvaapi.data.Authentication;
-import com.github.aeonlucid.hvaapi.data.Profile;
-import com.github.aeonlucid.hvaapi.data.StudyLocation;
-import com.github.aeonlucid.hvaapi.data.User;
+import com.github.aeonlucid.hvaapi.data.*;
 import com.github.aeonlucid.hvaapi.http.AcceptingCookieJar;
 import okhttp3.*;
 import org.apache.logging.log4j.LogManager;
@@ -108,6 +105,16 @@ public class HvAClient {
         if(user == null) return null;
 
         return performRequest(StudyLocation[].class, "/api/studylocations");
+    }
+
+    /**
+     * Gets an array containing all {@link News} of the Hogeschool van Amsterdam.
+     * @return Returns an array containing all {@link News} of the Hogeschool van Amsterdam.
+     */
+    public News[] getNews(){
+        if(user == null) return null;
+
+        return performRequest(News[].class, "/api/news");
     }
 
     /**

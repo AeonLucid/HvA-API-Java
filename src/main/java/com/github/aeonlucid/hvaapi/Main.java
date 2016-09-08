@@ -1,5 +1,6 @@
 package com.github.aeonlucid.hvaapi;
 
+import com.github.aeonlucid.hvaapi.data.News;
 import com.github.aeonlucid.hvaapi.data.StudyLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,8 +28,14 @@ class Main {
 
         logger.info("Successfully authenticated with the Hogeschool van Amsterdam.");
 
+        logger.info("Study Locations:");
         for (StudyLocation studyLocation : client.getStudyLocations()) {
-            logger.info(String.format("%s - %s", studyLocation.getName(), studyLocation.getUrl()));
+            logger.info(String.format(" - %s: %s", studyLocation.getName(), studyLocation.getUrl()));
+        }
+
+        logger.info("News:");
+        for (News news : client.getNews()) {
+            logger.info(String.format(" - %s %s", news.getCreatedBy(), news.getTitle()));
         }
     }
 
