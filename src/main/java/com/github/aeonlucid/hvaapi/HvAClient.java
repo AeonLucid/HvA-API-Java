@@ -164,7 +164,7 @@ public class HvAClient {
      * @return Returns an array containing all {@link Location}s of the Hogeschool van Amsterdam.
      */
     public Location[] getLocations() {
-        if (!authenticated) return new Location[0];
+        if (!authenticated) return null;
 
         return performRequest(Location[].class, "/api/locations");
     }
@@ -278,6 +278,29 @@ public class HvAClient {
         if (!authenticated) return null;
 
         return performRequest(TimetableItem[].class, String.format("/timetable/other?id=%s&startDate=%s&endDate=%s", studentSetId, timeTableDateFormat.format(startDate), timeTableDateFormat.format(endDate)));
+    }
+
+    /**
+     * Gets an array containing all {@link Schedule}s of the specified filter of the Hogeschool van Amsterdam.
+     *
+     * @param filter Filter to search for {@link Schedule}s.
+     * @return Returns an array containing all {@link Schedule}s of the specified filter of the Hogeschool van Amsterdam.
+     */
+    public Schedule[] getSchedules(String filter) {
+        if (!authenticated) return null;
+
+        return performRequest(Schedule[].class, String.format("/timetable/schedules?filter=%s", filter));
+    }
+
+    /**
+     * Gets an array containing all {@link AzUrl}s of the Hogeschool van Amsterdam.
+     *
+     * @return Returns an array containing all {@link AzUrl}s of the Hogeschool van Amsterdam.
+     */
+    public AzUrl[] getAzUrlsForEmployees() {
+        if (!authenticated) return null;
+
+        return performRequest(AzUrl[].class, "/api/az");
     }
 
     // GET
