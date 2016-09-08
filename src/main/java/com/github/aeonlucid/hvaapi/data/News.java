@@ -11,7 +11,7 @@ public class News {
     private String title;
 
     @JsonProperty("Text")
-    private String text;
+    private String textHtml;
 
     @JsonProperty("CreatedOn") // Date
     private String createdOn;
@@ -30,8 +30,8 @@ public class News {
         return title;
     }
 
-    public String getText() {
-        return text;
+    public String getTextHtml() {
+        return textHtml;
     }
 
     public String getCreatedOn() {
