@@ -93,6 +93,7 @@ public class HvAClient {
     /**
      * Updates the profile on the Hogeschool van Amsterdam.
      *
+     * @param profile The modified {@link Profile} you want to synchronize.
      * @return Determines whether updating was successful.
      */
     public boolean updateProfile(Profile profile) {
@@ -239,6 +240,7 @@ public class HvAClient {
     /**
      * Gets the {@link TimetableItem}s of the specified week number of the specified studentSetId of the Hogeschool van Amsterdam.
      *
+     * @param studentSetId StudentSet ID which is retrieve-able from {@link Schedule}.
      * @param weekNumber The week number to retrieve {@link TimetableItem}s.
      * @return Returns the {@link TimetableItem}s of the specified week number of the specified studentSetId of the Hogeschool van Amsterdam.
      */
@@ -249,6 +251,7 @@ public class HvAClient {
     /**
      * Gets the {@link TimetableItem}s of the specified start {@link LocalDate} plus 7 days of the specified studentSetId of the Hogeschool van Amsterdam.
      *
+     * @param studentSetId StudentSet ID which is retrieve-able from {@link Schedule}.
      * @param startDate The start {@link LocalDate} to retrieve {@link TimetableItem}s from, 7 days are added for the endDate.
      * @return Returns the {@link TimetableItem}s of the specified start {@link LocalDate} plus 7 days of the specified studentSetId of the Hogeschool van Amsterdam.
      */
@@ -259,6 +262,7 @@ public class HvAClient {
     /**
      * Gets the {@link TimetableItem}s of the specified start {@link LocalDate} and end {@link LocalDate} of the specified studentSetId of the Hogeschool van Amsterdam.
      *
+     * @param studentSetId StudentSet ID which is retrieve-able from {@link Schedule}.
      * @param startDate The start {@link LocalDate} to retrieve {@link TimetableItem}s from.
      * @param endDate   The end {@link LocalDate} to retrieve {@link TimetableItem}s from.
      * @return Returns the {@link TimetableItem}s of the specified start {@link LocalDate} and end {@link LocalDate} of the specified studentSetId of the Hogeschool van Amsterdam.
@@ -270,6 +274,7 @@ public class HvAClient {
     /**
      * Gets the {@link TimetableItem}s of the specified start {@link Date} and end {@link Date} of the specified studentSetId of the Hogeschool van Amsterdam.
      *
+     * @param studentSetId StudentSet ID which is retrieve-able from {@link Schedule}.
      * @param startDate The start {@link Date} to retrieve {@link TimetableItem} from.
      * @param endDate   The end {@link Date} to retrieve {@link TimetableItem} from.
      * @return Returns the {@link TimetableItem}s of the specified start {@link Date} and end {@link Date} of the specified studentSetId of the Hogeschool van Amsterdam.
