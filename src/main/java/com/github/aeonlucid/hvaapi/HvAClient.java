@@ -74,7 +74,18 @@ public class HvAClient {
     }
 
     /**
-     * Synchronizes the {@link Profile} property to the Hogeschool van Amsterdam.
+     * Gets the current {@link AuthenticationUser} of the Hogeschool van Amsterdam.
+     *
+     * @return Returns the current {@link AuthenticationUser} of the Hogeschool van Amsterdam.
+     */
+    public AuthenticationUser getCurrentUser() {
+        if (!authenticated) return null;
+
+        return performRequest(AuthenticationUser.class, "/auth/getCurrentUser");
+    }
+
+    /**
+     * Updates the profile on the Hogeschool van Amsterdam.
      *
      * @return Determines whether updating was successful.
      */
@@ -98,9 +109,9 @@ public class HvAClient {
     }
 
     /**
-     * Gets the {@link Domain}s of the Hogeschool van Amsterdam.
+     * Gets an array containing all {@link Domain}s of the Hogeschool van Amsterdam.
      *
-     * @return Returns the {@link Domain}s of the Hogeschool van Amsterdam.
+     * @return Returns an array containing all {@link Domain}s of the Hogeschool van Amsterdam.
      */
     public Domain[] getDomains() {
         if (!authenticated) return null;
@@ -109,9 +120,9 @@ public class HvAClient {
     }
 
     /**
-     * Gets the {@link Programme}s of the Hogeschool van Amsterdam.
+     * Gets an array containing all {@link Programme}s of the Hogeschool van Amsterdam.
      *
-     * @return Returns the {@link Programme}s of the Hogeschool van Amsterdam.
+     * @return Returns an array containing all {@link Programme}s of the Hogeschool van Amsterdam.
      */
     public Programme[] getProgrammes() {
         if (!authenticated) return null;
@@ -120,14 +131,14 @@ public class HvAClient {
     }
 
     /**
-     * Gets the current {@link AuthenticationUser} of the Hogeschool van Amsterdam.
+     * Gets the {@link Absentee}s of the Hogeschool van Amsterdam.
      *
-     * @return Returns the current {@link AuthenticationUser} of the Hogeschool van Amsterdam.
+     * @return Returns the {@link Absentee}s of the Hogeschool van Amsterdam.
      */
-    public AuthenticationUser getCurrentUser() {
-        if (!authenticated) return null;
+    public Absentee[] getAbsentees() {
+        if (!authenticated) return new Absentee[0];
 
-        return performRequest(AuthenticationUser.class, "/auth/getCurrentUser");
+        return performRequest(Absentee[].class, "/api/absentees");
     }
 
     /**
@@ -139,6 +150,17 @@ public class HvAClient {
         if (!authenticated) return null;
 
         return performRequest(News[].class, "/api/news");
+    }
+
+    /**
+     * Gets an array containing all {@link Location}s of the Hogeschool van Amsterdam.
+     *
+     * @return Returns an array containing all {@link Location}s of the Hogeschool van Amsterdam.
+     */
+    public Location[] getLocations() {
+        if (!authenticated) return new Location[0];
+
+        return performRequest(Location[].class, "/api/locations");
     }
 
     /**

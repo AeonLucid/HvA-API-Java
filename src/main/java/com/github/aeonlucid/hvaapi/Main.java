@@ -26,26 +26,6 @@ class Main {
 
         logger.info("Successfully authenticated with the Hogeschool van Amsterdam.");
 
-//        logger.info("Domains:");
-//        for (Domain domain : client.getDomains()) {
-//            logger.info(String.format(" - %s %s", domain.getCode(), domain.getName()));
-//        }
-//
-//        logger.info("Programmes:");
-//        for (Programme programme : client.getProgrammes()) {
-//            logger.info(String.format(" - %s %s", programme.getName(), programme.getAzUrl()));
-//        }
-//
-//        logger.info("Study Locations:");
-//        for (StudyLocation studyLocation : client.getStudyLocations()) {
-//            logger.info(String.format(" - %s: %s", studyLocation.getName(), studyLocation.getUrl()));
-//        }
-//
-//        logger.info("News:");
-//        for (News news : client.getNews()) {
-//            logger.info(String.format(" - %s %s", news.getCreatedBy(), news.getTitle()));
-//        }
-
         if (client.signOut()) {
             logger.info("Successfully signed out.");
         }
