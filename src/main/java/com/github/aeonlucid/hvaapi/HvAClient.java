@@ -9,9 +9,13 @@ import com.github.aeonlucid.hvaapi.http.AcceptingCookieJar;
 import okhttp3.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import java.io.IOException;
 import java.net.Proxy;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class HvAClient {
 
@@ -25,6 +29,7 @@ public class HvAClient {
     private final String password;
     private final OkHttpClient httpClient;
     private final ObjectMapper objectMapper;
+    private final SimpleDateFormat timeTableDateFormat;
 
     private boolean authenticated;
 
@@ -36,6 +41,7 @@ public class HvAClient {
         this.username = username;
         this.password = password;
         this.authenticated = false;
+        this.timeTableDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         httpClient = new OkHttpClient.Builder()
                 .cookieJar(new AcceptingCookieJar())
@@ -184,6 +190,50 @@ public class HvAClient {
         if (!authenticated) return null;
 
         return performRequest(StudyLocationPage.class, String.format("/api/studylocations/page?url=%s&main=true&serviceUrl=%s/", url, API_URL));
+    }
+
+    /**
+     * Gets the {@link TimetableItem}s of the specified week number of the currently signed in user of the Hogeschool van Amsterdam.
+     *
+     * @param weekNumber The week number to retrieve {@link TimetableItem}s.
+     * @return Returns the {@link TimetableItem}s of the specified week number of the currently signed in user of the Hogeschool van Amsterdam.
+     */
+    public TimetableItem[] getMyTimeTable(int weekNumber) {
+        return getMyTimeTable(new DateTime().withWeekOfWeekyear(weekNumber).withDayOfWeek(1).toLocalDate());
+    }
+
+    /**
+     * Gets the {@link TimetableItem}s of the specified start {@link LocalDate} plus 7 days of the currently signed in user of the Hogeschool van Amsterdam.
+     *
+     * @param startDate The start {@link LocalDate} to retrieve {@link TimetableItem}s from, 7 days are added for the endDate.
+     * @return Returns the {@link TimetableItem}s of the specified start {@link LocalDate} of the currently signed in user of the Hogeschool van Amsterdam.
+     */
+    public TimetableItem[] getMyTimeTable(LocalDate startDate) {
+        return getMyTimeTable(startDate.toDate(), startDate.plusDays(7).toDate());
+    }
+
+    /**
+     * Gets the {@link TimetableItem}s of the specified start {@link LocalDate} and end {@link LocalDate} of the currently signed in user of the Hogeschool van Amsterdam.
+     *
+     * @param startDate The start {@link LocalDate} to retrieve {@link TimetableItem}s from.
+     * @param endDate The end {@link LocalDate} to retrieve {@link TimetableItem}s from.
+     * @return Returns the {@link TimetableItem}s of the specified start {@link LocalDate} and end {@link LocalDate} of the currently signed in user of the Hogeschool van Amsterdam.
+     */
+    public TimetableItem[] getMyTimeTable(LocalDate startDate, LocalDate endDate) {
+        return getMyTimeTable(startDate.toDate(), endDate.toDate());
+    }
+
+    /**
+     * Gets the {@link TimetableItem}s of the specified start {@link Date} and end {@link Date} of the currently signed in user of the Hogeschool van Amsterdam.
+     *
+     * @param startDate The start {@link Date} to retrieve {@link TimetableItem} from.
+     * @param endDate The end {@link Date} to retrieve {@link TimetableItem} from.
+     * @return Returns the {@link TimetableItem}s of the specified start {@link Date} and end {@link Date} of the currently signed in user of the Hogeschool van Amsterdam.
+     */
+    public TimetableItem[] getMyTimeTable(Date startDate, Date endDate) {
+        if (!authenticated) return null;
+
+        return performRequest(TimetableItem[].class, "/timetable/my?startDate=" + timeTableDateFormat.format(startDate) + "&endDate=" + timeTableDateFormat.format(endDate));
     }
 
     // GET
