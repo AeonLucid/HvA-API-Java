@@ -216,7 +216,7 @@ public class HvAClient {
      * Gets the {@link TimetableItem}s of the specified start {@link LocalDate} and end {@link LocalDate} of the currently signed in user of the Hogeschool van Amsterdam.
      *
      * @param startDate The start {@link LocalDate} to retrieve {@link TimetableItem}s from.
-     * @param endDate The end {@link LocalDate} to retrieve {@link TimetableItem}s from.
+     * @param endDate   The end {@link LocalDate} to retrieve {@link TimetableItem}s from.
      * @return Returns the {@link TimetableItem}s of the specified start {@link LocalDate} and end {@link LocalDate} of the currently signed in user of the Hogeschool van Amsterdam.
      */
     public TimetableItem[] getMyTimeTable(LocalDate startDate, LocalDate endDate) {
@@ -227,13 +227,57 @@ public class HvAClient {
      * Gets the {@link TimetableItem}s of the specified start {@link Date} and end {@link Date} of the currently signed in user of the Hogeschool van Amsterdam.
      *
      * @param startDate The start {@link Date} to retrieve {@link TimetableItem} from.
-     * @param endDate The end {@link Date} to retrieve {@link TimetableItem} from.
+     * @param endDate   The end {@link Date} to retrieve {@link TimetableItem} from.
      * @return Returns the {@link TimetableItem}s of the specified start {@link Date} and end {@link Date} of the currently signed in user of the Hogeschool van Amsterdam.
      */
     public TimetableItem[] getMyTimeTable(Date startDate, Date endDate) {
         if (!authenticated) return null;
 
-        return performRequest(TimetableItem[].class, "/timetable/my?startDate=" + timeTableDateFormat.format(startDate) + "&endDate=" + timeTableDateFormat.format(endDate));
+        return performRequest(TimetableItem[].class, String.format("/timetable/my?startDate=%s&endDate=%s", timeTableDateFormat.format(startDate), timeTableDateFormat.format(endDate)));
+    }
+
+    /**
+     * Gets the {@link TimetableItem}s of the specified week number of the specified studentSetId of the Hogeschool van Amsterdam.
+     *
+     * @param weekNumber The week number to retrieve {@link TimetableItem}s.
+     * @return Returns the {@link TimetableItem}s of the specified week number of the specified studentSetId of the Hogeschool van Amsterdam.
+     */
+    public TimetableItem[] getOtherTimeTable(String studentSetId, int weekNumber) {
+        return getOtherTimeTable(studentSetId, new DateTime().withWeekOfWeekyear(weekNumber).withDayOfWeek(1).toLocalDate());
+    }
+
+    /**
+     * Gets the {@link TimetableItem}s of the specified start {@link LocalDate} plus 7 days of the specified studentSetId of the Hogeschool van Amsterdam.
+     *
+     * @param startDate The start {@link LocalDate} to retrieve {@link TimetableItem}s from, 7 days are added for the endDate.
+     * @return Returns the {@link TimetableItem}s of the specified start {@link LocalDate} plus 7 days of the specified studentSetId of the Hogeschool van Amsterdam.
+     */
+    public TimetableItem[] getOtherTimeTable(String studentSetId, LocalDate startDate) {
+        return getOtherTimeTable(studentSetId, startDate.toDate(), startDate.plusDays(7).toDate());
+    }
+
+    /**
+     * Gets the {@link TimetableItem}s of the specified start {@link LocalDate} and end {@link LocalDate} of the specified studentSetId of the Hogeschool van Amsterdam.
+     *
+     * @param startDate The start {@link LocalDate} to retrieve {@link TimetableItem}s from.
+     * @param endDate   The end {@link LocalDate} to retrieve {@link TimetableItem}s from.
+     * @return Returns the {@link TimetableItem}s of the specified start {@link LocalDate} and end {@link LocalDate} of the specified studentSetId of the Hogeschool van Amsterdam.
+     */
+    public TimetableItem[] getOtherTimeTable(String studentSetId, LocalDate startDate, LocalDate endDate) {
+        return getOtherTimeTable(studentSetId, startDate.toDate(), endDate.toDate());
+    }
+
+    /**
+     * Gets the {@link TimetableItem}s of the specified start {@link Date} and end {@link Date} of the specified studentSetId of the Hogeschool van Amsterdam.
+     *
+     * @param startDate The start {@link Date} to retrieve {@link TimetableItem} from.
+     * @param endDate   The end {@link Date} to retrieve {@link TimetableItem} from.
+     * @return Returns the {@link TimetableItem}s of the specified start {@link Date} and end {@link Date} of the specified studentSetId of the Hogeschool van Amsterdam.
+     */
+    public TimetableItem[] getOtherTimeTable(String studentSetId, Date startDate, Date endDate) {
+        if (!authenticated) return null;
+
+        return performRequest(TimetableItem[].class, String.format("/timetable/other?id=%s&startDate=%s&endDate=%s", studentSetId, timeTableDateFormat.format(startDate), timeTableDateFormat.format(endDate)));
     }
 
     // GET
