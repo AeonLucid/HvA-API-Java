@@ -1,7 +1,5 @@
 package com.github.aeonlucid.hvaapi;
 
-import com.github.aeonlucid.hvaapi.data.News;
-import com.github.aeonlucid.hvaapi.data.StudyLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,21 +19,35 @@ class Main {
 
         final HvAClient client = new HvAClient(args[0], args[1]);
 
-        if (!client.authenticate()) {
+        if (!client.signIn()) {
             logger.error("Wrong HvA credentials specified.");
             return;
         }
 
         logger.info("Successfully authenticated with the Hogeschool van Amsterdam.");
 
-        logger.info("Study Locations:");
-        for (StudyLocation studyLocation : client.getStudyLocations()) {
-            logger.info(String.format(" - %s: %s", studyLocation.getName(), studyLocation.getUrl()));
-        }
+//        logger.info("Domains:");
+//        for (Domain domain : client.getDomains()) {
+//            logger.info(String.format(" - %s %s", domain.getCode(), domain.getName()));
+//        }
+//
+//        logger.info("Programmes:");
+//        for (Programme programme : client.getProgrammes()) {
+//            logger.info(String.format(" - %s %s", programme.getName(), programme.getAzUrl()));
+//        }
+//
+//        logger.info("Study Locations:");
+//        for (StudyLocation studyLocation : client.getStudyLocations()) {
+//            logger.info(String.format(" - %s: %s", studyLocation.getName(), studyLocation.getUrl()));
+//        }
+//
+//        logger.info("News:");
+//        for (News news : client.getNews()) {
+//            logger.info(String.format(" - %s %s", news.getCreatedBy(), news.getTitle()));
+//        }
 
-        logger.info("News:");
-        for (News news : client.getNews()) {
-            logger.info(String.format(" - %s %s", news.getCreatedBy(), news.getTitle()));
+        if (client.signOut()) {
+            logger.info("Successfully signed out.");
         }
     }
 

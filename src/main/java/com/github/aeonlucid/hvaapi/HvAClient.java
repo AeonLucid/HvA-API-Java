@@ -26,8 +26,7 @@ public class HvAClient {
     private final OkHttpClient httpClient;
     private final ObjectMapper objectMapper;
 
-    private User user;
-    private Profile profile;
+    private boolean authenticated;
 
     public HvAClient(String username, String password) {
         this(username, password, null);
@@ -36,6 +35,7 @@ public class HvAClient {
     public HvAClient(String username, String password, Proxy proxy) {
         this.username = username;
         this.password = password;
+        this.authenticated = false;
 
         httpClient = new OkHttpClient.Builder()
                 .cookieJar(new AcceptingCookieJar())
@@ -49,33 +49,39 @@ public class HvAClient {
 
     /**
      * Sends an authentication request to the Hogeschool van Amsterdam.
-     * @return Indicates whether authentication was successful.
+     *
+     * @return Determines whether authentication was successful.
      */
-    public boolean authenticate() {
-        RequestBody requestBody = new FormBody.Builder()
+    public boolean signIn() {
+        final RequestBody requestBody = new FormBody.Builder()
                 .add("username", username)
                 .add("password", password)
                 .build();
 
-        Authentication authentication = performRequest(Authentication.class, "/auth/signin", requestBody);
+        final AuthenticationUser authentication = performRequest(AuthenticationUser.class, "/auth/signin", requestBody);
 
-        if (authentication == null || !authentication.isAuthenticated())
-            return false;
+        return authenticated = !(authentication == null || !authentication.isAuthenticated());
 
-        user = authentication.getUser();
-        profile = authentication.getProfile();
+    }
 
-        return true;
+    /**
+     * Sends a sign out request to the Hogeschool van Amsterdam.
+     *
+     * @return Determines whether signing out was successful.
+     */
+    public boolean signOut() {
+        return !authenticated || (authenticated = performRequest("/auth/signout"));
     }
 
     /**
      * Synchronizes the {@link Profile} property to the Hogeschool van Amsterdam.
-     * @return Indicates whether updating was successful.
+     *
+     * @return Determines whether updating was successful.
      */
-    public boolean updateProfile() {
-        if(user == null) return false;
+    public boolean updateProfile(Profile profile) {
+        if (!authenticated) return false;
 
-        RequestBody requestBody = new FormBody.Builder()
+        final RequestBody requestBody = new FormBody.Builder()
                 .add("Domain", profile.getDomain())
                 .add("DomainAZUrl", profile.getDomainAzUrl())
                 .add("Language", profile.getLanguage())
@@ -87,50 +93,81 @@ public class HvAClient {
                 .add("IsComplete", String.valueOf(profile.isComplete()))
                 .build();
 
-        Profile newProfile = performRequest(Profile.class, "/auth/updateprofile", requestBody);
+        return performRequest(Profile.class, "/auth/updateprofile", requestBody) != null;
 
-        if(newProfile == null)
-            return false;
-
-        profile = newProfile;
-
-        return true;
     }
 
     /**
-     * Gets an array containing all {@link StudyLocation}s of the Hogeschool van Amsterdam.
-     * @return Returns an array containing all {@link StudyLocation}s of the Hogeschool van Amsterdam.
+     * Gets the {@link Domain}s of the Hogeschool van Amsterdam.
+     *
+     * @return Returns the {@link Domain}s of the Hogeschool van Amsterdam.
      */
-    public StudyLocation[] getStudyLocations(){
-        if(user == null) return null;
+    public Domain[] getDomains() {
+        if (!authenticated) return null;
 
-        return performRequest(StudyLocation[].class, "/api/studylocations");
+        return performRequest(Domain[].class, "/api/domains");
+    }
+
+    /**
+     * Gets the {@link Programme}s of the Hogeschool van Amsterdam.
+     *
+     * @return Returns the {@link Programme}s of the Hogeschool van Amsterdam.
+     */
+    public Programme[] getProgrammes() {
+        if (!authenticated) return null;
+
+        return performRequest(Programme[].class, "/api/programmes");
+    }
+
+    /**
+     * Gets the current {@link AuthenticationUser} of the Hogeschool van Amsterdam.
+     *
+     * @return Returns the current {@link AuthenticationUser} of the Hogeschool van Amsterdam.
+     */
+    public AuthenticationUser getCurrentUser() {
+        if (!authenticated) return null;
+
+        return performRequest(AuthenticationUser.class, "/auth/getCurrentUser");
     }
 
     /**
      * Gets an array containing all {@link News} of the Hogeschool van Amsterdam.
+     *
      * @return Returns an array containing all {@link News} of the Hogeschool van Amsterdam.
      */
-    public News[] getNews(){
-        if(user == null) return null;
+    public News[] getNews() {
+        if (!authenticated) return null;
 
         return performRequest(News[].class, "/api/news");
     }
 
     /**
-     * Gets the {@link Profile} of the currently authenticated user.
-     * @return Returns the {@link Profile} of the currently authenticated user.
+     * Gets an array containing all {@link StudyLocation}s of the Hogeschool van Amsterdam.
+     *
+     * @return Returns an array containing all {@link StudyLocation}s of the Hogeschool van Amsterdam.
      */
-    public Profile getProfile() {
-        return profile;
+    public StudyLocation[] getStudyLocations() {
+        if (!authenticated) return null;
+
+        return performRequest(StudyLocation[].class, "/api/studylocations");
     }
 
-    /**
-     * Gets the {@link User} of the currently authenticated user.
-     * @return Returns the {@link User} of the currently authenticated user.
-     */
-    public User getUser() {
-        return user;
+    // GET
+    private boolean performRequest(String urlPath) {
+        Request.Builder requestBuilder = getRequestBuilder(urlPath).get();
+
+        try {
+            final Response response = httpClient.newCall(requestBuilder.build()).execute();
+
+            if (logger.isDebugEnabled())
+                logger.debug(response.body().string());
+
+            return response.isSuccessful();
+        } catch (IOException e) {
+            logger.error("HvAClient performRequest threw an exception.", e);
+        }
+
+        return false;
     }
 
     // GET
@@ -140,28 +177,36 @@ public class HvAClient {
 
     // POST
     private <T> T performRequest(Class<T> responseClass, String urlPath, RequestBody requestBody) {
-        Request.Builder requestBuilder = new Request.Builder()
-                .url(API_URL + urlPath)
-                .header("Accept", "application/json")
-                .header("Accept-Language", "en-US")
-                .header("User-Agent", USER_AGENT)
-                .header("X-Requested-With", "nl.hva.hvapp");
+        Request.Builder requestBuilder = getRequestBuilder(urlPath);
 
-        if(requestBody != null){
+        if (requestBody != null) {
             requestBuilder = requestBuilder.post(requestBody);
         } else {
             requestBuilder = requestBuilder.get();
         }
 
         try {
-            Response response = httpClient.newCall(requestBuilder.build()).execute();
+            final Response response = httpClient.newCall(requestBuilder.build()).execute();
+            final String responseStr = response.body().string();
 
-            return objectMapper.readValue(response.body().string(), responseClass);
+            if (logger.isDebugEnabled())
+                logger.debug(responseStr);
+
+            return objectMapper.readValue(responseStr, responseClass);
         } catch (IOException e) {
             logger.error("HvAClient performRequest threw an exception.", e);
         }
 
         return null;
+    }
+
+    private Request.Builder getRequestBuilder(String urlPath) {
+        return new Request.Builder()
+                .url(API_URL + urlPath)
+                .header("Accept", "application/json")
+                .header("Accept-Language", "en-US")
+                .header("User-Agent", USER_AGENT)
+                .header("X-Requested-With", "nl.hva.hvapp");
     }
 
 }

@@ -2,7 +2,7 @@ package com.github.aeonlucid.hvaapi.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Authentication {
+public class AuthenticationUser {
 
     @JsonProperty("IsAuthenticated")
     private boolean authenticated;
