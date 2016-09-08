@@ -15,7 +15,7 @@ public class AcceptingCookieJar implements CookieJar {
 
     private final static Logger logger = LogManager.getLogger(HvAClient.class);
 
-    private final HashMap<String, List<Cookie>> cookieStore = new HashMap<>();
+    private final HashMap<String, List<Cookie>> cookieStore = new HashMap<String, List<Cookie>>();
 
     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
         if(logger.isDebugEnabled()) {
