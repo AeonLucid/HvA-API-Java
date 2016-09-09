@@ -4,7 +4,14 @@ An Java API to authenticate with and request data from the Hogeschool van Amster
 
 ## Installation
 
-Soon.
+Download [the latest JAR](https://search.maven.org/remote_content?g=com.github.aeonlucid.hvaapi&a=hva-api&v=LATEST) or grab via Maven:
+```xml
+<dependency>
+  <groupId>com.github.aeonlucid.hvaapi</groupId>
+  <artifactId>hva-api</artifactId>
+  <version>1.0</version>
+</dependency>
+```
 
 ## Example
 
