@@ -12,6 +12,10 @@ Download [the latest JAR](https://search.maven.org/remote_content?g=com.github.a
   <version>1.0</version>
 </dependency>
 ```
+or Gradle:
+```groovy
+compile group: 'com.github.aeonlucid.hvaapi', name: 'hva-api', version: '1.0'
+```
 
 ## Example
 
