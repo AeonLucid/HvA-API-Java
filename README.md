@@ -2,6 +2,8 @@
 
 An Java API to authenticate with and request data from the Hogeschool van Amsterdam.
 
+[Click here for the NetStandard1.1 (C#) version.](https://github.com/AeonLucid/HvA-API-NetStandard1)
+
 ## Installation
 
 Download [the latest JAR](https://search.maven.org/remote_content?g=com.github.aeonlucid.hvaapi&a=hva-api&v=LATEST) or grab via Maven:
